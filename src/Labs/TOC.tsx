@@ -22,7 +22,7 @@ export default function TOC() {
         <Nav.Link as={Link} to="/Kambaz" eventKey="/Kambaz">Kambaz</Nav.Link>
       </Nav.Item>
       <Nav.Item>
-        <Nav.Link href="https://github.com/jannunzi" target="_blank">My GitHub</Nav.Link>
+        <Nav.Link id="wd-github" href="https://github.com/clarisseli/" target="_blank">My GitHub</Nav.Link>
       </Nav.Item>
     </Nav>
   );
