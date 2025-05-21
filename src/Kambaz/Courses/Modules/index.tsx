@@ -1,127 +1,443 @@
+import LessonControlButtons from "./LessonControlButtons";
+import { ListGroup, Row, Col } from "react-bootstrap";
+import { BsGripVertical } from "react-icons/bs";
+import ModulesControls from "./ModulesControls";
+import ModuleControlButtons from "./ModuleControlButtons";
+
 export default function Modules() {
     return (
-        <div>
-            {/* Implement Collapse All button, View Progress button, etc. */}
-            <button>Collapse All</button>
-            <button>View Progress</button>
-            <select>
-                <option>Publish All</option>
-            </select>
-            <button>+ Module</button>
+        <div className="container-fluid" id="wd-modules-screen">
+            <Row>
+                <Col xs={12}>
+                    <ModulesControls />
+                </Col>
+            </Row>
+            <Row className="pt-4">
+                <Col xs={12}>
+                    <ListGroup className="rounded-0" id="wd-modules">
+                        <ListGroup.Item className="wd-module p-0 mb-5 fs-5 border-gray">
+                            <div className="wd-title p-3 ps-2 bg-secondary d-flex justify-content-between align-items-center">
+                                <div className="d-flex align-items-center">
+                                    <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                    <span>Week 1, Lecture 1 - Course Introduction, Syllabus, Agenda</span>
+                                </div>
+                                <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                    <ModuleControlButtons />
+                                </div>
+                            </div>
+                            <ListGroup className="wd-lessons rounded-0">
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            LEARNING OBJECTIVES
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">Introduction to the course</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">Learn what is Web Development</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            READING
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">Full Stack Developer - Chapter 1 - Introduction</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">Full Stack Developer - Chapter 2 - Creating User Interfaces With HTML</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            SLIDES
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">Introduction to Web Development</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">Creating an HTTP server with Node.js</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">Creating a React Application</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                            </ListGroup>
+                        </ListGroup.Item>
 
-            <ul id="wd-modules">
-                {/* Week 1, Lecture 1 */}
-                <li className="wd-module">
-                    <div className="wd-title">
-                        Week 1, Lecture 1 - Course Introduction, Syllabus, Agenda
-                    </div>
-                    <ul className="wd-lessons">
-                        <li className="wd-lesson">
-                            <span className="wd-title">LEARNING OBJECTIVES</span>
-                            <ul className="wd-content">
-                                <li className="wd-content-item">Introduction to the course</li>
-                                <li className="wd-content-item">Learn what is Web Development</li>
-                            </ul>
-                        </li>
-                        <li className="wd-lesson">
-                            <span className="wd-title">READING</span>
-                            <ul className="wd-content">
-                                <li className="wd-content-item">Full Stack Developer - Chapter 1 - Introduction</li>
-                                <li className="wd-content-item">Full Stack Developer - Chapter 2 - Creating User Interfaces With HTML</li>
-                            </ul>
-                        </li>
-                        <li className="wd-lesson">
-                            <span className="wd-title">SLIDES</span>
-                            <ul className="wd-content">
-                                <li className="wd-content-item">Introduction to Web Development</li>
-                                <li className="wd-content-item">Creating an HTTP server with Node.js</li>
-                                <li className="wd-content-item">Creating a React Application</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <br />
 
-                {/* Week 1, Lecture 2 */}
-                <li className="wd-module">
-                    <div className="wd-title">
-                        Week 1, Lecture 2 - Formatting User Interfaces with HTML
-                    </div>
-                    <ul className="wd-lessons">
-                        <li className="wd-lesson">
-                            <span className="wd-title">LEARNING OBJECTIVES</span>
-                            <ul className="wd-content">
-                                <li className="wd-content-item">Learn how to create user interfaces with HTML</li>
-                                <li className="wd-content-item">Deploy the assignment to Netlify</li>
-                            </ul>
-                        </li>
-                        <li className="wd-lesson">
-                            <span className="wd-title">SLIDES</span>
-                            <ul className="wd-content">
-                                <li className="wd-content-item">Introduction to HTML and the DOM</li>
-                                <li className="wd-content-item">Formatting Web content with Headings and Paragraphs</li>
-                                <li className="wd-content-item">Formatting content with Lists and Tables</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <br />
+                        <ListGroup.Item className="wd-module p-0 mb-5 fs-5 border-gray">
+                            <div className="wd-title p-3 ps-2 bg-secondary d-flex justify-content-between align-items-center">
+                                <div className="d-flex align-items-center">
+                                    <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                    <span>Week 1, Lecture 2 - Formatting User Interfaces with HTML</span>
+                                </div>
+                                <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                    <ModuleControlButtons />
+                                </div>
+                            </div>
 
-                {/* Week 2, Lecture 1 */}
-                <li className="wd-module">
-                    <div className="wd-title">
-                        Week 2, Lecture 1 - Styling User Interfaces with CSS
-                    </div>
-                    <ul className="wd-lessons">
-                        <li className="wd-lesson">
-                            <span className="wd-title">LEARNING OBJECTIVES</span>
-                            <ul className="wd-content">
-                                <li className="wd-content-item">Learn how to style HTML using CSS</li>
-                                <li className="wd-content-item">Understand the Box Model and CSS selectors</li>
-                            </ul>
-                        </li>
-                        <li className="wd-lesson">
-                            <span className="wd-title">READING</span>
-                            <ul className="wd-content">
-                                <li className="wd-content-item">Full Stack Developer - Chapter 3 - Styling User Interfaces with CSS</li>
-                            </ul>
-                        </li>
-                        <li className="wd-lesson">
-                            <span className="wd-title">SLIDES</span>
-                            <ul className="wd-content">
-                                <li className="wd-content-item">Styling with CSS</li>
-                                <li className="wd-content-item">The Box Model</li>
-                                <li className="wd-content-item">Styling using Classes and IDs</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <br />
+                            <ListGroup className="wd-lessons rounded-0">
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            LEARNING OBJECTIVES
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">Learn how to create user interfaces with HTML</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">Deploy the assignment to Netlify</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            SLIDES
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">Introduction to HTML and the DOM</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">Formatting Web content with Headings and Paragraphs</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">Formatting content with Lists and Tables</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                            </ListGroup>
+                        </ListGroup.Item>
 
-                {/* Week 2, Lecture 2 */}
-                <li className="wd-module">
-                    <div className="wd-title">
-                        Week 2, Lecture 2 - Positioning and Responsive Web Design
-                    </div>
-                    <ul className="wd-lessons">
-                        <li className="wd-lesson">
-                            <span className="wd-title">LEARNING OBJECTIVES</span>
-                            <ul className="wd-content">
-                                <li className="wd-content-item">Understand how to position elements using CSS</li>
-                                <li className="wd-content-item">Implement responsive layouts with Flexbox and Grid</li>
-                            </ul>
-                        </li>
-                        <li className="wd-lesson">
-                            <span className="wd-title">SLIDES</span>
-                            <ul className="wd-content">
-                                <li className="wd-content-item">CSS Positioning</li>
-                                <li className="wd-content-item">Flexbox</li>
-                                <li className="wd-content-item">CSS Grid</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
+                        <ListGroup.Item className="wd-module p-0 mb-5 fs-5 border-gray">
+                            <div className="wd-title p-3 ps-2 bg-secondary d-flex justify-content-between align-items-center">
+                                <div className="d-flex align-items-center">
+                                    <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                    <span>Week 2, Lecture 1 - Styling User Interfaces with CSS</span>
+                                </div>
+                                <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                    <ModuleControlButtons />
+                                </div>
+                            </div>
+                            <ListGroup className="wd-lessons rounded-0">
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            LEARNING OBJECTIVES
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">Learn how to style HTML using CSS</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">Understand the Box Model and CSS selectors</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            READING
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">Full Stack Developer - Chapter 3 - Styling User Interfaces with CSS</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            SLIDES
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">Styling with CSS</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">The Box Model</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">Styling using Classes and IDs</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                            </ListGroup>
+                        </ListGroup.Item>
+
+                        <ListGroup.Item className="wd-module p-0 mb-5 fs-5 border-gray">
+                            <div className="wd-title p-3 ps-2 bg-secondary d-flex justify-content-between align-items-center">
+                                <div className="d-flex align-items-center">
+                                    <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                    <span>Week 2, Lecture 2 - Positioning and Responsive Web Design</span>
+                                </div>
+                                <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                    <ModuleControlButtons />
+                                </div>
+                            </div>
+                            <ListGroup className="wd-lessons rounded-0">
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            LEARNING OBJECTIVES
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">Understand how to position elements using CSS</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">Implement responsive layouts with Flexbox and Grid</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            SLIDES
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">CSS Positioning</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">Flexbox</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                                <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
+                                            <span className="ms-4">CSS Grid</span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <LessonControlButtons />
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                            </ListGroup>
+                        </ListGroup.Item>
+                    </ListGroup>
+                </Col>
+            </Row>
         </div>
     );
 }

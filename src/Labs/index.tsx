@@ -3,10 +3,12 @@ import { Route, Routes, Navigate } from "react-router";
 import TOC from "./TOC";
 import Lab2 from "./Lab2";
 import Lab3 from "./Lab3";
+
 export default function Labs() {
     return (
-        <div>
+        <div className="container-fluid">
             <h1>Labs</h1>
+            <p><strong>Mengru Li (Clarisse)</strong> — Section 04</p>
             <TOC />
             <Routes>
                 <Route path="/" element={<Navigate to="Lab1" />} />
