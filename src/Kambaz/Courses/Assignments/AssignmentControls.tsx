@@ -6,7 +6,7 @@ export default function AssignmentsControls() {
     return (
         <div id="wd-assignments-controls"
             className="d-flex justify-content-between align-items-center gap-3 w-100 flex-wrap">
-            <div className="position-relative flex-grow-1" style={{ minWidth: "250px", maxWidth: "600px" }}>
+            <div className="position-relative flex-grow-1" >
                 <Form.Control id="wd-search-assignment" size="lg" placeholder="Search..." className="ps-5 py-2 w-100" />
                 <IoIosSearch className="fs-4 position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary" />
             </div>
