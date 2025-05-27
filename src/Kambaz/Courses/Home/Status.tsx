@@ -8,6 +8,16 @@ import { IoNotificationsOutline } from "react-icons/io5";
 import { Button } from "react-bootstrap";
 
 export default function CourseStatus() {
+    const buttons = [
+        { label: "Import Existing Content", icon: BiImport },
+        { label: "Import from Commons", icon: LiaFileImportSolid },
+        { label: "Choose Home Page", icon: BsHouseDoor },
+        { label: "View Course Stream", icon: BiImport },
+        { label: "New Announcement", icon: BsMegaphone },
+        { label: "New Analytics", icon: AiOutlineBarChart },
+        { label: "View Course Notifications", icon: IoNotificationsOutline }
+    ];
+
     return (
         <div id="wd-course-status" style={{ width: "350px" }}>
             <h2>Course Status</h2>
@@ -24,27 +34,12 @@ export default function CourseStatus() {
                 </div>
             </div>
             <br />
-            <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
-                <BiImport className="me-2 fs-5" /> Import Existing Content
-            </Button>
-            <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
-                <LiaFileImportSolid className="me-2 fs-5" /> Import from Commons
-            </Button>
-            <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
-                <BsHouseDoor className="me-2 fs-5" /> Choose Home Page
-            </Button>
-            <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
-                <BiImport className="me-2 fs-5" /> View Course Stream
-            </Button>
-            <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
-                <BsMegaphone className="me-2 fs-5" /> New Announcement
-            </Button>
-            <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
-                <AiOutlineBarChart className="me-2 fs-5" /> New Analytics
-            </Button>
-            <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
-                <IoNotificationsOutline className="me-2 fs-5" /> View Course Notifications
-            </Button>
+            {buttons.map(({ label, icon: Icon }) => (
+                <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
+                    <Icon className="me-2 fs-5" />
+                    {label}
+                </Button>
+            ))}
         </div>
     );
 }

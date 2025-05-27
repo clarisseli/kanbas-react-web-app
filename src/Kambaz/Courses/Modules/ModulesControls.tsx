@@ -6,7 +6,7 @@ import { Button, Dropdown } from "react-bootstrap";
 export default function ModulesControls() {
     return (
         <div id="wd-modules-controls"
-            className="d-flex flex-wrap justify-content-end align-items-center gap-2"
+            className="wd-row-center flex-wrap justify-content-end gap-2"
             style={{ overflow: "visible" }}
         >
             <Button variant="secondary" size="lg" id="wd-collapse-all" className="px-3 flex-shrink-0">

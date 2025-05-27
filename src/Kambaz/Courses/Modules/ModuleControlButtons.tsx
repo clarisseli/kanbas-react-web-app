@@ -5,7 +5,7 @@ export default function ModuleControlButtons() {
     return (
         <div className="float-end">
             <GreenCheckmark />
-            <BsPlus className="fs-2" />
-            <IoEllipsisVertical className="fs-4" />
+            <BsPlus style={{ fontSize: "36px" }} />
+            <IoEllipsisVertical style={{ fontSize: "24px" }} />
         </div>);
 }

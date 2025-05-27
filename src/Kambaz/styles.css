@@ -34,11 +34,17 @@ body * {
     --bs-list-group-border-color: gray;
 }
 
-.wd-lesson {
+.wd-lesson,
+.wd-assignment {
     border-left: 3px solid green !important;
 }
 
 .wd-lessons,
 .wd-lessons .list-group-item {
     width: 100% !important;
+}
+
+.wd-row-center {
+    display: flex;
+    align-items: center;
 }

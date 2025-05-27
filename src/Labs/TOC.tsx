@@ -1,29 +1,20 @@
+import { Link } from 'react-router-dom';
 import Nav from "react-bootstrap/Nav";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 
 export default function TOC() {
-  const location = useLocation();
-
+  const { pathname } = useLocation();
   return (
-    <Nav variant="pills" activeKey={location.pathname}>
-      <Nav.Item>
-        <Nav.Link as={Link} to="/Labs" eventKey="/Labs">Labs</Nav.Link>
-      </Nav.Item>
-      <Nav.Item>
-        <Nav.Link as={Link} to="/Labs/Lab1" eventKey="/Labs/Lab1">Lab 1</Nav.Link>
-      </Nav.Item>
-      <Nav.Item>
-        <Nav.Link as={Link} to="/Labs/Lab2" eventKey="/Labs/Lab2">Lab 2</Nav.Link>
-      </Nav.Item>
-      <Nav.Item>
-        <Nav.Link as={Link} to="/Labs/Lab3" eventKey="/Labs/Lab3">Lab 3</Nav.Link>
-      </Nav.Item>
-      <Nav.Item>
-        <Nav.Link as={Link} to="/Kambaz" eventKey="/Kambaz">Kambaz</Nav.Link>
-      </Nav.Item>
-      <Nav.Item>
-        <Nav.Link id="wd-github" href="https://github.com/clarisseli/" target="_blank">My GitHub</Nav.Link>
-      </Nav.Item>
+    <Nav variant="pills" id="wd-toc">
+      <Nav.Item> <Nav.Link as={Link} to="/Labs/Lab1" id="wd-a1"
+        active={pathname.includes("Lab1")}> Lab 1 </Nav.Link> </Nav.Item>
+      <Nav.Item> <Nav.Link as={Link} to="/Labs/Lab2" id="wd-a2"
+        active={pathname.includes("Lab2")}> Lab 2 </Nav.Link> </Nav.Item>
+      <Nav.Item> <Nav.Link as={Link} to="/Labs/Lab3" id="wd-a3"
+        active={pathname.includes("Lab3")}> Lab 3 </Nav.Link> </Nav.Item>
+      <Nav.Item> <Nav.Link as={Link} to="/Kambaz" id="wd-a3"> Kambaz </Nav.Link> </Nav.Item>
+      <Nav.Item> <Nav.Link href="https://github.com/clarisseli/" target="_blank" id="wd-github"
+        active={pathname.includes("github")}> My GitHub </Nav.Link> </Nav.Item>
     </Nav>
   );
 }

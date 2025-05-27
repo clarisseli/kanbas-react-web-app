@@ -4,6 +4,6 @@ export default function LessonControlButtons() {
     return (
         <div className="float-end">
             <GreenCheckmark />
-            <IoEllipsisVertical className="fs-4" />
+            <IoEllipsisVertical style={{ fontSize: "24px" }} />
         </div>);
 }
