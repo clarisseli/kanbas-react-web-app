@@ -2,8 +2,19 @@ import { FaBan } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6";
 import GreenCheckmark from "./GreenCheckmark";
 import { Button, Dropdown } from "react-bootstrap";
+import ModuleEditor from "./ModuleEditor";
+import { useState } from "react";
 
-export default function ModulesControls() {
+
+export default function ModulesControls({
+    moduleName, setModuleName, addModule }: {
+        moduleName: string;
+        setModuleName: (title: string) => void;
+        addModule: () => void;
+    }) {
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
     return (
         <div id="wd-modules-controls"
             className="wd-row-center flex-wrap justify-content-end gap-2"
@@ -39,10 +50,19 @@ export default function ModulesControls() {
                 </Dropdown.Menu>
             </Dropdown>
 
-            <Button variant="danger" size="lg" id="wd-add-module-btn" className="px-3 flex-shrink-0">
+            <Button variant="danger" size="lg" id="wd-add-module-btn" className="px-3 flex-shrink-0" onClick={handleShow}>
                 <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
                 Module
             </Button>
+
+            <ModuleEditor
+                show={show}
+                handleClose={handleClose}
+                dialogTitle="Add Module"
+                moduleName={moduleName}
+                setModuleName={setModuleName}
+                addModule={addModule}
+            />
         </div>
     );
 }

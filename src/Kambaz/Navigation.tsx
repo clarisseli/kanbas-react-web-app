@@ -4,17 +4,29 @@ import { LiaBookSolid, LiaCogSolid } from "react-icons/lia";
 import { FaInbox, FaRegCircleUser } from "react-icons/fa6";
 import { Link, useLocation } from "react-router-dom";
 import { ListGroup } from "react-bootstrap";
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 
 export default function KambazNavigation() {
     const { pathname } = useLocation();
-    const links = [
+    const { currentUser } = useSelector((state: any) => state.accountReducer);
+    const [links, setLinks] = useState<any[]>([]);
+    useEffect(() => {
+        const updatedLinks = [
+            {
+                label: "Account",
+                path: currentUser ? "/Kambaz/Account/Profile" : "/Kambaz/Account/Signin",
+                icon: FaRegCircleUser
+            },
+            { label: "Dashboard", path: "/Kambaz/Dashboard", icon: AiOutlineDashboard },
+            { label: "Courses", path: "/Kambaz/Dashboard", icon: LiaBookSolid },
+            { label: "Calendar", path: "/Kambaz/Calendar", icon: IoCalendarOutline },
+            { label: "Inbox", path: "/Kambaz/Inbox", icon: FaInbox },
+            { label: "Labs", path: "/Labs", icon: LiaCogSolid },
+        ];
+        setLinks(updatedLinks);
+    }, [currentUser]);
 
-        { label: "Dashboard", path: "/Kambaz/Dashboard", icon: AiOutlineDashboard },
-        { label: "Courses", path: "/Kambaz/Dashboard", icon: LiaBookSolid },
-        { label: "Calendar", path: "/Kambaz/Calendar", icon: IoCalendarOutline },
-        { label: "Inbox", path: "/Kambaz/Inbox", icon: FaInbox },
-        { label: "Labs", path: "/Labs", icon: LiaCogSolid },
-    ];
 
     return (
         <ListGroup id="wd-kambaz-navigation" style={{ width: 120 }}
@@ -24,16 +36,10 @@ export default function KambazNavigation() {
                 <img src="/images/NEU.png" width="75px" />
             </ListGroup.Item>
 
-            <ListGroup.Item as={Link} to="/Kambaz/Account" className={`text-center border-0 bg-black
-                ${pathname.includes("Account") ? "bg-white text-danger" : "bg-black text-white"}`}>
-                <FaRegCircleUser className={`fs-1 ${pathname.includes("Account") ? "text-danger" : "text-white"}`} />
-                <br />
-                Account
-            </ListGroup.Item>
             {links.map((link) => (
-                <ListGroup.Item key={link.path} as={Link} to={link.path} className={`bg-black text-center border-0
-                        ${pathname.includes(link.label) ? "text-danger bg-white" : "text-white bg-black"}`}>
-                    {link.icon({ className: "fs-1 text-danger" })}
+                <ListGroup.Item key={link.label} as={Link} to={link.path} className={`bg-black text-center border-0
+              ${pathname.includes(link.label) ? "text-danger bg-white" : "text-white bg-black"}`}>
+                    <link.icon className={`fs-1 ${pathname.includes(link.label) ? "text-danger" : link.label.includes("Account") ? "text-white" : "text-danger"}`} />
                     <br />
                     {link.label}
                 </ListGroup.Item>
