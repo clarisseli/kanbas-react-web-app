@@ -1,14 +1,13 @@
 import { Button, Col, Form, Row } from "react-bootstrap";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router";
-import { updateAssignment, deleteAssignment, editAssignmentId }
-    from "./reducer";
+import { updateAssignment, deleteAssignment } from "./reducer";
 import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
+import * as assignmentClient from "./client";
 
 export default function AssignmentEditor() {
     const { assignments } = useSelector((state: any) => state.assignmentsReducer);
-
     const { cid, aid } = useParams();
     const assignment = assignments.find((assignment: any) => (assignment._id === aid && assignment.course === cid))
     const dispatch = useDispatch();
@@ -19,6 +18,36 @@ export default function AssignmentEditor() {
         return <h2>Assignment not found</h2>;
     }
 
+    const isNewAssignment = !assignmentData._id.startsWith("A");
+    const handleDataChange = (field: string, value: string) => {
+        const newData = { ...assignmentData, [field]: value };
+        setAssignmentData(newData);
+    };
+    const handleCancel = () => {
+        if (isNewAssignment) {
+            dispatch(deleteAssignment({ assignment: assignmentData }));
+        }
+        navigate(`/Kambaz/Courses/${cid}/Assignments`);
+    };
+    const handleSave = async () => {
+        if (isNewAssignment) {
+            const assignmentToCreate = { ...assignmentData };
+            delete assignmentToCreate._id;
+            if (!cid) {
+                throw new Error("Course ID (cid) is undefined.");
+            }
+            const createdAssignment = await assignmentClient.createAssignment(cid, assignmentToCreate);
+            dispatch(deleteAssignment({ assignment: assignmentData }));
+            dispatch(updateAssignment({ assignment: createdAssignment }));
+            navigate(`/Kambaz/Courses/${cid}/Assignments`);
+            return;
+        } else {
+            const updatedAssignment = await assignmentClient.updateAssignment(assignmentData);
+            dispatch(updateAssignment({ assignment: updatedAssignment }));
+        }
+        navigate(`/Kambaz/Courses/${cid}/Assignments`);
+    };
+
     return (
         <div className="container-fluid" id="wd-assignments-editor">
             <Row className="justify-content-center">
@@ -28,7 +57,7 @@ export default function AssignmentEditor() {
                         <Form.Control id="wd-name"
                             value={assignmentData.title}
                             className="mb-3"
-                            onChange={(e) => setAssignmentData({ ...assignmentData, title: e.target.value })} />
+                            onChange={(e) => handleDataChange('title', e.target.value)} />
 
                         <Row className="mb-3">
                             <Col sm={12}>
@@ -36,7 +65,7 @@ export default function AssignmentEditor() {
                                     value={assignmentData.description}
                                     className="border p-3 rounded bg-white"
                                     style={{ whiteSpace: "pre-wrap" }}
-                                    onChange={(e) => setAssignmentData({ ...assignmentData, description: e.target.value })}>
+                                    onChange={(e) => handleDataChange('description', e.target.value)}>
                                 </Form.Control>
                             </Col>
                         </Row>
@@ -48,15 +77,18 @@ export default function AssignmentEditor() {
                             <Col xs={12} sm={9}>
                                 <Form.Control id="wd-points" type="number"
                                     value={assignmentData.points}
-                                    onChange={(e) => setAssignmentData({ ...assignmentData, points: e.target.value })} />
+                                    onChange={(e) => handleDataChange('points', e.target.value)} />
                             </Col>
                         </Row>
+
                         <Row className="mb-3 align-items-center">
                             <Form.Label column xs={12} sm={3} htmlFor="wd-group" className="text-sm-end">
                                 Assignment Group
                             </Form.Label>
                             <Col xs={12} sm={9}>
-                                <Form.Select id="wd-group">
+                                <Form.Select id="wd-group"
+                                    value={assignmentData.group || 'ASSIGNMENTS'}
+                                    onChange={(e) => handleDataChange('group', e.target.value)}>
                                     <option value="ASSIGNMENTS">ASSIGNMENTS</option>
                                     <option value="QUIZZES">QUIZZES</option>
                                     <option value="EXAMS">EXAMS</option>
@@ -70,7 +102,9 @@ export default function AssignmentEditor() {
                                 Display Grade as
                             </Form.Label>
                             <Col xs={12} sm={9}>
-                                <Form.Select id="wd-display-grade-as">
+                                <Form.Select id="wd-display-grade-as"
+                                    value={assignmentData.displayGradeAs || 'Percentage'}
+                                    onChange={(e) => handleDataChange('displayGradeAs', e.target.value)}>
                                     <option>Percentage</option>
                                     <option>Points</option>
                                     <option>Letter Grade</option>
@@ -78,14 +112,15 @@ export default function AssignmentEditor() {
                             </Col>
                         </Row>
 
-
                         <Row className="mb-3 align-items-start">
                             <Form.Label column xs={12} sm={3} className="text-sm-end pt-sm-1">
                                 Submission Type
                             </Form.Label>
                             <Col xs={12} sm={9}>
                                 <div className="border rounded p-3">
-                                    <Form.Select id="wd-submission-type">
+                                    <Form.Select id="wd-submission-type"
+                                        value={assignmentData.submissionType || 'Online'}
+                                        onChange={(e) => handleDataChange('submissionType', e.target.value)}>
                                         <option>Online</option>
                                     </Form.Select>
 
@@ -109,14 +144,16 @@ export default function AssignmentEditor() {
                                 <div className="border rounded p-3">
                                     <Form.Group className="mb-3">
                                         <Form.Label htmlFor="wd-assign-to" className="fw-bold">Assign to</Form.Label>
-                                        <Form.Control id="wd-assign-to" />
+                                        <Form.Control id="wd-assign-to"
+                                            value={assignmentData.assignTo || ''}
+                                            onChange={(e) => handleDataChange('assignTo', e.target.value)} />
                                     </Form.Group>
 
                                     <Form.Group className="mb-3">
                                         <Form.Label htmlFor="wd-due-date" className="fw-bold">Due</Form.Label>
                                         <Form.Control id="wd-due-date" type="datetime-local"
-                                            defaultValue={new Date(assignmentData.due_dt).toISOString().slice(0, 16)}
-                                            onChange={(e) => setAssignmentData({ ...assignmentData, due_dt: e.target.value })} />
+                                            value={new Date(assignmentData.due_dt).toISOString().slice(0, 16)}
+                                            onChange={(e) => handleDataChange('due_dt', e.target.value)} />
                                     </Form.Group>
 
                                     <Form.Group className="mb-3">
@@ -124,14 +161,14 @@ export default function AssignmentEditor() {
                                             <Col xs={12} sm={6}>
                                                 <Form.Label htmlFor="wd-available-from" className="fw-bold">Available from</Form.Label>
                                                 <Form.Control id="wd-available-from" type="datetime-local"
-                                                    defaultValue={new Date(assignmentData.available_dt).toISOString().slice(0, 16)}
-                                                    onChange={(e) => setAssignmentData({ ...assignmentData, available_dt: e.target.value })} />
+                                                    value={new Date(assignmentData.available_dt).toISOString().slice(0, 16)}
+                                                    onChange={(e) => handleDataChange('available_dt', e.target.value)} />
                                             </Col>
                                             <Col xs={12} sm={6}>
                                                 <Form.Label htmlFor="wd-available-until" className="fw-bold">Until</Form.Label>
                                                 <Form.Control id="wd-available-until" type="datetime-local"
-                                                    defaultValue={new Date(assignmentData.until_dt).toISOString().slice(0, 16)}
-                                                    onChange={(e) => setAssignmentData({ ...assignmentData, until_dt: e.target.value })} />
+                                                    value={new Date(assignmentData.until_dt).toISOString().slice(0, 16)}
+                                                    onChange={(e) => handleDataChange('until_dt', e.target.value)} />
                                             </Col>
                                         </Row>
                                     </Form.Group>
@@ -141,30 +178,12 @@ export default function AssignmentEditor() {
 
                         <hr />
                         <div className="text-end mt-4">
-                            <Link to={`/Kambaz/Courses/${cid}/Assignments`}>
-                                <Button variant="light" className="me-2"
-                                    onClick={() => {
-                                        if (!assignmentData._id.startsWith("A")) {
-                                            dispatch(deleteAssignment({ assignment: assignmentData }));
-                                        }
-                                        navigate(`/Kambaz/Courses/${cid}/Assignments`)
-                                    }}>
-                                    Cancel
-                                </Button>
-                            </Link>
-                            <Link to={`/Kambaz/Courses/${cid}/Assignments`}>
-                                <Button variant="danger"
-                                    onClick={() => {
-                                        if (!assignmentData._id.startsWith("A")) {
-                                            dispatch(editAssignmentId({ assignment: assignmentData }))
-                                            setAssignmentData({ ...assignmentData, _id: "A" + assignmentData._id })
-                                        }
-                                        dispatch(updateAssignment({ assignment: assignmentData }));
-                                        navigate(`/Kambaz/Courses/${cid}/Assignments`)
-                                    }}>
-                                    Save
-                                </Button>
-                            </Link>
+                            <Button variant="light" className="me-2" onClick={handleCancel}>
+                                Cancel
+                            </Button>
+                            <Button variant="danger" onClick={handleSave}>
+                                Save
+                            </Button>
                         </div>
                     </Form>
                 </Col>

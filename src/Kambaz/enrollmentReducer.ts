@@ -1,34 +1,31 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { enrollments } from "./Database";
-import { v4 as uuidv4 } from 'uuid';
 
 const initialState = {
-    enrollments: enrollments,
+    enrollments: [],
 };
-const enrollmentsSlice = createSlice({
+
+const enrollmentSlice = createSlice({
     name: "enrollments",
     initialState,
     reducers: {
-        unenroll: (state, { payload: { user, course } }) => {
-            state.enrollments = state.enrollments.filter((e) =>
-                !(e.course === course._id && e.user === user._id)
-            );
-            console.log("After unenroll:", JSON.stringify(state.enrollments, null, 2));
-
+        setEnrollments: (state, action) => {
+            state.enrollments = action.payload;
         },
-        enroll: (state, { payload: { user, course } }) => {
-            const newEnrollment =
-            {
-                _id: uuidv4(),
-                user: user._id,
-                course: course._id
-            }
-            state.enrollments = [...state.enrollments, newEnrollment]
+        enroll: (state, { payload: enrollment }) => {
+            const newEnrollment: any = {
+                _id: new Date().getTime().toString(),
+                user: enrollment.user,
+                course: enrollment.course
+            };
+            state.enrollments = [...state.enrollments, newEnrollment] as any;
         },
-    },
+        unenroll: (state, { payload: enrollment }) => {
+            state.enrollments = state.enrollments.filter(
+                (e: any) => !(e.user === enrollment.user && e.course === enrollment.course)
+            ) as any;
+        },
+    }
 });
 
-export const { unenroll, enroll } =
-    enrollmentsSlice.actions;
-
-export default enrollmentsSlice.reducer;
+export const { setEnrollments, enroll, unenroll } = enrollmentSlice.actions;
+export default enrollmentSlice.reducer;

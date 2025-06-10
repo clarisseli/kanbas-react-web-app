@@ -6,25 +6,37 @@ import AssignmentsControls from "./AssignmentControls";
 import AssignmentListControlButtons from "./AssignmentListControlButtons";
 import AssignmentsControlButtons from "./AssignmentsControlButtons";
 import AssignmentRemover from "./AssignmentRemover";
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import * as assignmentClient from "./client"
+import { setAssignments } from "./reducer";
+
 
 export default function Assignments() {
     const { cid } = useParams();
     const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+    const { currentUser } = useSelector((state: any) => state.accountReducer);
+    const dispatch = useDispatch();
+    const [show, setShow] = useState(false);
+    const [assignmentToDelete, setAssignmentToDelete] = useState<any>(null);
     const formatDate = (dateString: any) => {
         return new Date(dateString)
             .toLocaleString('en-US', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true })
             .replace(',', '')
-    };
-    const { currentUser } = useSelector((state: any) => state.accountReducer);
-    const [show, setShow] = useState(false);
-    const [assignmentToDelete, setAssignmentToDelete] = useState<any>(null);
+    };;
     const handleClose = () => setShow(false);
     const handleShow = (assignment: any) => {
         setAssignmentToDelete(assignment);
         setShow(true);
     };
+    const fetchAssignments = async () => {
+        const assignments = await assignmentClient.fetchAssignmentsForCourse(cid);
+        dispatch(setAssignments(assignments));
+    };
+
+    useEffect(() => {
+        fetchAssignments();
+    }, [cid]);
 
     return (
         <div className="container-fluid px-4 py-3" id="wd-assignments">
@@ -75,8 +87,18 @@ export default function Assignments() {
                                                     </div>
                                                 </div>
                                                 <div className="flex-shrink-0">
-                                                    {currentUser.role === "FACULTY" && <FaTrash className="me-1" onClick={() => handleShow(assignment)}></FaTrash>}
-                                                    {currentUser.role === "FACULTY" && assignmentToDelete && <AssignmentRemover show={show} handleClose={handleClose} dialogTitle={`Delete assignment \"${assignmentToDelete.title}\"?`} assignment={assignmentToDelete}></AssignmentRemover>}
+                                                    {currentUser.role === "FACULTY" && (
+                                                        < FaTrash className="me-2"
+                                                            onClick={() => handleShow(assignment)}>
+                                                        </FaTrash>)}
+                                                    {currentUser.role === "FACULTY" && (
+                                                        assignmentToDelete &&
+                                                        <AssignmentRemover
+                                                            show={show}
+                                                            handleClose={handleClose}
+                                                            dialogTitle={`Delete assignment \"${assignmentToDelete.title}\"?`}
+                                                            assignment={assignmentToDelete}>
+                                                        </AssignmentRemover>)}
                                                     {currentUser.role === "FACULTY" && <AssignmentsControlButtons />}
                                                 </div>
                                             </div>
