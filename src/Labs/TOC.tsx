@@ -19,6 +19,9 @@ export default function TOC() {
       <Nav.Item> <Nav.Link as={Link} to="/Kambaz" id="wd-a3"> Kambaz </Nav.Link> </Nav.Item>
       <Nav.Item> <Nav.Link href="https://github.com/clarisseli/" target="_blank" id="wd-github"
         active={pathname.includes("github")}> My GitHub </Nav.Link> </Nav.Item>
+      <Nav.Item><Nav.Link href="https://kambaz-node-server-app-2wvk.onrender.com" target="_blank" id="wd-server-render"
+        active={pathname.includes("server-render")}> Server Render </Nav.Link>
+      </Nav.Item>
     </Nav>
   );
 }
