@@ -6,7 +6,7 @@ import { setEnrollments } from "./enrollmentReducer";
 import * as enrollmentsClient from "./enrollmentsClient";
 
 export default function Dashboard({ courses, course, allCourses, setCourse, addNewCourse,
-    deleteCourse, updateCourse, fetchCourses, fetchAllCourses }: {
+    deleteCourse, updateCourse, fetchCourses, fetchAllCourses, enrolling, setEnrolling, updateEnrollment }: {
         courses: any[]; course: any; allCourses: any;
         setCourse: (course: any) => void;
         addNewCourse: () => void;
@@ -14,6 +14,9 @@ export default function Dashboard({ courses, course, allCourses, setCourse, addN
         updateCourse: () => void;
         fetchCourses: () => void;
         fetchAllCourses: () => void;
+        enrolling: boolean;
+        setEnrolling: (enrolling: boolean) => void;
+        updateEnrollment: (courseId: string, enrolled: boolean) => void;
     }) {
     const { currentUser } = useSelector((state: any) => state.accountReducer);
     const { enrollments } = useSelector((state: any) => state.enrollmentsReducer);
