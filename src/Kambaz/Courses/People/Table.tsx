@@ -1,13 +1,15 @@
 import { Table } from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa";
-import { useParams } from "react-router-dom";
-import * as db from "../../Database";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import PeopleDetails from "./Details";
 
-export default function PeopleTable() {
-    const { cid } = useParams();
-    const { users, enrollments } = db;
+export default function PeopleTable({ users = [] }: { users?: any[] }) {
+    const { currentUser } = useSelector((state: any) => state.accountReducer);
+
     return (
-        <div className="container-fluid overflow-auto px-4" id="wd-people-table">
+        <div className="container-fluid overflow-auto" id="wd-people-table">
+            {currentUser.role === "ADMIN" && <PeopleDetails />}
             <div className="table-responsive">
                 <Table striped>
                     <thead>
@@ -22,15 +24,14 @@ export default function PeopleTable() {
                     </thead>
                     <tbody>
                         {users
-                            .filter((usr) =>
-                                enrollments.some((enrollment) => enrollment.user === usr._id && enrollment.course === cid)
-                            )
                             .map((user: any) => (
                                 <tr key={user._id}>
                                     <td className="wd-full-name text-nowrap">
-                                        <FaUserCircle className="me-2 fs-1 text-secondary" />
-                                        <span className="wd-first-name">{user.firstName}</span>
-                                        <span className="wd-last-name"> {user.lastName}</span>
+                                        <Link to={`/Kambaz/Account/Users/${user._id}`} className="text-decoration-none">
+                                            <FaUserCircle className="me-2 fs-1 text-secondary" />
+                                            <span className="wd-first-name text-danger">{user.firstName}</span>
+                                            <span className="wd-last-name text-danger"> {user.lastName}</span>
+                                        </Link>
                                     </td>
                                     <td className="wd-login-id">{user.loginId}</td>
                                     <td className="wd-section">{user.section}</td>
