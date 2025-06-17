@@ -54,13 +54,13 @@ export default function Dashboard({ courses, course, allCourses, setCourse, addN
     };
     useEffect(() => {
         fetchEnrollments();
-        fetchAllCourses(); // Add this line
+        fetchAllCourses();
     }, []);
 
     useEffect(() => {
         if (currentUser?.role === "STUDENT") {
             fetchCourses();
-            fetchAllCourses(); // Add this line too
+            fetchAllCourses();
         }
     }, [showAll, enrollments, currentUser]);
 
@@ -95,15 +95,7 @@ export default function Dashboard({ courses, course, allCourses, setCourse, addN
                     Enrollments
                 </Button>)}
 
-            <h2 id="wd-dashboard-published">
-                Published Courses ({
-                    currentUser?.role === "FACULTY"
-                        ? courses.length
-                        : showAll
-                            ? allCourses.length
-                            : allCourses.filter((course: { _id: any; }) => isEnrolled(course._id)).length
-                })
-            </h2>
+            <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2>
             <hr />
             <div id="wd-dashboard-courses">
                 <Row xs={1} md={5} className="g-4">

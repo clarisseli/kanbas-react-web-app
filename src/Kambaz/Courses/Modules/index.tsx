@@ -16,25 +16,28 @@ export default function Modules() {
     const [moduleName, setModuleName] = useState("");
     const dispatch = useDispatch();
     const { currentUser } = useSelector((state: any) => state.accountReducer);
-    const fetchModules = async () => {
-        const modules = await coursesClient.findModulesForCourse(cid as string);
+
+    const fetchModulesForCourse = async () => {
+        const modules = await coursesClient.findModulesForCourse(cid!);
         dispatch(setModules(modules));
     };
     useEffect(() => {
-        fetchModules();
+        fetchModulesForCourse();
     }, []);
-    const createModuleForCourse = async () => {
-        if (!cid) return;
-        const newModule = { name: moduleName, course: cid };
-        const module = await coursesClient.createModuleForCourse(cid, newModule);
-        dispatch(addModule(module));
-        fetchModules();
+
+    const addModuleHandler = async () => {
+        const newModule = await coursesClient.createModuleForCourse(cid!, {
+            name: moduleName,
+            course: cid,
+        });
+        dispatch(addModule(newModule));
+        setModuleName("");
     };
-    const removeModule = async (moduleId: string) => {
+    const deleteModuleHandler = async (moduleId: string) => {
         await modulesClient.deleteModule(moduleId);
         dispatch(deleteModule(moduleId));
     };
-    const saveModule = async (module: any) => {
+    const updateModuleHandler = async (module: any) => {
         await modulesClient.updateModule(module);
         dispatch(updateModule(module));
     };
@@ -45,7 +48,7 @@ export default function Modules() {
                 <ModulesControls
                     moduleName={moduleName}
                     setModuleName={setModuleName}
-                    addModule={createModuleForCourse} />}
+                    addModule={addModuleHandler} />}
 
             <ListGroup id="wd-modules" className="rounded-0 mt-4">
                 {modules
@@ -58,11 +61,11 @@ export default function Modules() {
                                     {module.editing && (
                                         <FormControl className="w-50 d-inline-block"
                                             onChange={(e) =>
-                                                dispatch(updateModule({ ...module, name: e.target.value }))
+                                                updateModuleHandler({ ...module, name: e.target.value })
                                             }
                                             onKeyDown={(e) => {
                                                 if (e.key === "Enter") {
-                                                    saveModule({ ...module, editing: false });
+                                                    updateModuleHandler({ ...module, editing: false });
                                                 }
                                             }}
                                             defaultValue={module.name} />
@@ -73,7 +76,7 @@ export default function Modules() {
                                     {currentUser.role === "FACULTY" &&
                                         <ModuleControlButtons
                                             moduleId={module._id}
-                                            deleteModule={(moduleId) => removeModule(moduleId)}
+                                            deleteModule={(moduleId) => deleteModuleHandler(moduleId)}
                                             editModule={(moduleId) => dispatch(editModule(moduleId))} />}
                                 </div>
                             </div>
