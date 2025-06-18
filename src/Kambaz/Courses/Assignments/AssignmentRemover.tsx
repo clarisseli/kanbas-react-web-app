@@ -1,6 +1,4 @@
 import { Modal, Button } from "react-bootstrap";
-import { useDispatch } from "react-redux";
-import { deleteAssignment } from "./reducer";
 import * as assignmentClient from "./client";
 
 export default function AssignmentRemover({
@@ -8,19 +6,23 @@ export default function AssignmentRemover({
     handleClose,
     dialogTitle,
     assignment,
+    onDelete,
 }: {
     show: boolean;
     handleClose: () => void;
     dialogTitle: string;
     assignment: any;
+    onDelete: (assignmentId: string) => void;
 }) {
-    const dispatch = useDispatch();
-
     const handleDelete = async () => {
         if (!assignment) return;
-        await assignmentClient.deleteAssignment(assignment.course, assignment._id);
-        dispatch(deleteAssignment({ assignment }));
-        handleClose();
+        try {
+            await assignmentClient.deleteAssignment(assignment.course, assignment._id);
+            onDelete(assignment._id);
+            handleClose();
+        } catch (error) {
+            console.error("Error deleting assignment:", error);
+        }
     };
 
     return (
