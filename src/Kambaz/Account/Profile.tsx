@@ -13,9 +13,7 @@ export default function Profile() {
     const updateProfile = async () => {
         const updatedProfile = await client.updateUser(profile);
         dispatch(setCurrentUser(updatedProfile));
-        await fetchProfile();
     };
-
     const fetchProfile = async () => {
         if (!currentUser) return navigate("/Kambaz/Account/Signin");
         const profile = await client.profile();
@@ -44,8 +42,9 @@ export default function Profile() {
                         onChange={(e) => setProfile({ ...profile, dob: e.target.value })} type="date" />
                     <FormControl defaultValue={profile.email} id="wd-email" className="mb-2" placeholder="Email Address"
                         onChange={(e) => setProfile({ ...profile, email: e.target.value })} />
-                    <select onChange={(e) => setProfile({ ...profile, role: e.target.value })}
-                        className="form-control mb-2" id="wd-role">
+                    <select className="form-control mb-2" id="wd-role"
+                        value={profile.role || "USER"}
+                        onChange={(e) => setProfile({ ...profile, role: e.target.value })}>
                         <option value="USER">User</option>            <option value="ADMIN">Admin</option>
                         <option value="FACULTY">Faculty</option>      <option value="STUDENT">Student</option>
                     </select>

@@ -6,13 +6,32 @@ import CoursesNavigation from "./Navigation";
 import Home from "./Home";
 import Modules from "./Modules";
 import PeopleTable from "./People/Table";
-import { useSelector } from "react-redux";
+import { getUsersForCourse } from "./client"; // ✅ Import from course client
+import { useState, useEffect } from "react";
 
-export default function Courses() {
+export default function Courses({ courses }: { courses: any[]; }) {
     const { cid } = useParams();
-    const { courses } = useSelector((state: any) => state.coursesReducer);
     const course = courses.find((course: any) => course._id === cid);
     const { pathname } = useLocation();
+    const [users, setUsers] = useState<any[]>([]);
+
+    const fetchUsers = async () => {
+        try {
+            console.log("Fetching users for course:", cid);
+            const users = await getUsersForCourse(cid); // ✅ Use correct function
+            console.log("Users fetched:", users);
+            setUsers(users);
+        } catch (error) {
+            console.error("Error fetching users:", error);
+        }
+    };
+
+    useEffect(() => {
+        if (cid) {
+            fetchUsers();
+        }
+    }, [cid]);
+
 
     return (
         <div id="wd-courses">
@@ -31,7 +50,7 @@ export default function Courses() {
                     <Route path="Modules" element={<Modules />} />
                     <Route path="Assignments" element={<Assignments />} />
                     <Route path="Assignments/:aid" element={<AssignmentEditor />} />
-                    <Route path="People" element={<PeopleTable />} />
+                    <Route path="People" element={<PeopleTable users={users} />} />
                 </Routes>
             </div>
         </div >
