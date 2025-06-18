@@ -9,7 +9,7 @@ export default function PeopleDetails() {
     const navigate = useNavigate();
     const [name, setName] = useState("");
     const [editing, setEditing] = useState(false);
-    const { uid, cid } = useParams();
+    const { uid } = useParams();
     const [user, setUser] = useState<any>({});
     const saveUser = async () => {
         const [firstName, lastName] = name.split(" ");
