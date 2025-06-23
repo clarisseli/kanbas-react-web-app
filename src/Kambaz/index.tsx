@@ -11,6 +11,7 @@ import Session from "./Account/Session";
 import * as courseClient from "./Courses/client";
 import * as userClient from "./Account/client";
 
+
 export default function Kambaz() {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const [course, setCourse] = useState<any>({
@@ -27,13 +28,19 @@ export default function Kambaz() {
   const [allCourses, setAllCourses] = useState<any[]>([]);
 
   const updateEnrollment = async (courseId: string, enrolled: boolean) => {
+    console.log("updateEnrollment called:", { courseId, enrolled, currentUser: currentUser._id });
     try {
       if (enrolled) {
-
+        console.log("Enrolling...");
         await userClient.enrollIntoCourse(currentUser._id, courseId);
       } else {
+        console.log("Unenrolling...");
         await userClient.unenrollFromCourse(currentUser._id, courseId);
       }
+
+      console.log("API call successful, updating state...");
+
+      // Update both courses and allCourses state
       setCourses(courses.map((course) =>
         course._id === courseId ? { ...course, enrolled } : course
       ));
@@ -41,6 +48,9 @@ export default function Kambaz() {
       setAllCourses(allCourses.map((course) =>
         course._id === courseId ? { ...course, enrolled } : course
       ));
+
+      // Also refresh the courses to get updated data
+      console.log("Refreshing courses...");
       await fetchCourses();
     } catch (error) {
       console.error("Error updating enrollment:", error);
@@ -48,7 +58,9 @@ export default function Kambaz() {
   };
   const fetchCourses = async () => {
     try {
+      console.log("Fetching courses...");
       const courses = await userClient.findMyCourses();
+      console.log("Courses fetched:", courses);
       setCourses(courses);
     } catch (error) {
       console.error(error);

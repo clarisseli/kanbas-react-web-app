@@ -9,7 +9,7 @@ export default function PeopleDetails() {
     const navigate = useNavigate();
     const [name, setName] = useState("");
     const [editing, setEditing] = useState(false);
-    const { uid } = useParams();
+    const { uid, cid } = useParams();
     const [user, setUser] = useState<any>({});
     const saveUser = async () => {
         const [firstName, lastName] = name.split(" ");
@@ -35,7 +35,7 @@ export default function PeopleDetails() {
 
     return (
         <div className="position-fixed top-0 end-0 bottom-0 bg-white p-4 shadow w-25">
-            <Link to={`/Kambaz/Account/Users`} className="btn position-fixed end-0 top-0">
+            <Link to={`/Kambaz/Courses/${cid}/People`} className="btn position-fixed end-0 top-0">
                 <IoCloseSharp className="fs-1" /><span className="visually-hidden">Close</span>
             </Link>
             <div className="text-center mt-2">

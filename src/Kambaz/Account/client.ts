@@ -4,15 +4,16 @@ export const REMOTE_SERVER = import.meta.env.VITE_REMOTE_SERVER;
 export const USERS_API = `${REMOTE_SERVER}/api/users`;
 
 export const findUserById = async (id: string) => {
-    const response = await axiosWithCredentials.get(`${USERS_API}/${id}`);
+    const response = await axios.get(`${USERS_API}/${id}`);
     return response.data;
 };
 export const findUsersByPartialName = async (name: string) => {
-    const response = await axiosWithCredentials.get(`${USERS_API}?name=${name}`);
+    const response = await axios.get(`${USERS_API}?name=${name}`);
     return response.data;
 };
 export const findUsersByRole = async (role: string) => {
-    const response = await axiosWithCredentials.get(`${USERS_API}?role=${role}`);
+    const response = await
+        axios.get(`${USERS_API}?role=${role}`);
     return response.data;
 };
 export const findAllUsers = async () => {
@@ -67,5 +68,6 @@ export const unenrollFromCourse = async (userId: string, courseId: string) => {
     const response = await axiosWithCredentials.delete(`${REMOTE_SERVER}/api/enrollments/${userId}/${courseId}`);
     return response.data;
 };
+
 
 

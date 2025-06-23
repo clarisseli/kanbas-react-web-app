@@ -10,10 +10,9 @@ export default function ProtectedCourseRoute({ children }: { children: any }) {
     const isEnrolled = enrollments.some(
         (enrollment: any) => enrollment.user === currentUser._id && enrollment.course === cid
     );
-
     if (!isEnrolled) {
         return <Navigate to="/Kambaz/Dashboard" />;
     }
-
     return children;
 }
+

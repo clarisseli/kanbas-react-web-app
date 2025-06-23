@@ -18,8 +18,7 @@ export default function ModuleEditor({ show, handleClose, dialogTitle, moduleNam
                     onClick={() => {
                         addModule();
                         handleClose();
-                    }} > Add Module
-                </Button>
+                    }} > Add Module </Button>
             </Modal.Footer>
         </Modal>
     );
