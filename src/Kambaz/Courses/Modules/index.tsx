@@ -10,12 +10,14 @@ import { useSelector, useDispatch } from "react-redux";
 import * as coursesClient from "../client";
 import * as modulesClient from "./client";
 
-export default function Modules() {
+export default function Modules({ viewContext }: { viewContext?: any }) {
     const { cid } = useParams();
     const { modules } = useSelector((state: any) => state.modulesReducer);
     const [moduleName, setModuleName] = useState("");
     const dispatch = useDispatch();
-    const { currentUser } = useSelector((state: any) => state.accountReducer);
+    const reduxCurrentUser = useSelector((state: any) => state.accountReducer);
+    const currentUser = viewContext?.currentUser || reduxCurrentUser;
+
     const fetchModules = async () => {
         const modules = await coursesClient.findModulesForCourse(cid as string);
         dispatch(setModules(modules));
@@ -50,7 +52,7 @@ export default function Modules() {
             <ListGroup id="wd-modules" className="rounded-0 mt-4">
                 {modules
                     .map((module: any) => (
-                        <ListGroup.Item className="wd-module p-0 mb-5 fs-5 border-gray">
+                        <ListGroup.Item key={module._id} className="wd-module p-0 mb-5 fs-5 border-gray">
                             <div className="wd-title p-3 ps-2 bg-secondary justify-content-between wd-row-center">
                                 <div className="wd-row-center flex-grow-1">
                                     <BsGripVertical className="me-2 fs-4 flex-shrink-0" />
@@ -81,7 +83,7 @@ export default function Modules() {
                             {module.lessons && (
                                 <ListGroup className="wd-lessons rounded-0">
                                     {module.lessons.map((lesson: any) => (
-                                        <ListGroup.Item className="wd-lesson p-3 ps-1">
+                                        <ListGroup.Item key={lesson._id || lesson.name} className="wd-lesson p-3 ps-1">
                                             <div className="wd-row-center justify-content-between">
                                                 <div className="wd-row-center justify-content-between">
                                                     <BsGripVertical className="me-2 fs-4 flex-shrink-0" />

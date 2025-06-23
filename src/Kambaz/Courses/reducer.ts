@@ -4,6 +4,7 @@ import { courses } from "../Database";
 const initialState = {
     courses: courses,
 };
+
 const coursesSlice = createSlice({
     name: "courses",
     initialState,
@@ -12,7 +13,7 @@ const coursesSlice = createSlice({
             state.courses = [...state.courses, course] as any;
         },
         deleteCourse: (state, { payload: { courseId } }) => {
-            state.courses = (state.courses.filter((course) => course._id !== courseId));
+            state.courses = state.courses.filter((course) => course._id !== courseId);
         },
         updateCourse: (state, { payload: { course } }) => {
             state.courses = state.courses.map((c) => {
@@ -21,12 +22,11 @@ const coursesSlice = createSlice({
                 } else {
                     return c;
                 }
-            })
+            });
         }
     },
 });
 
-export const { addNewCourse, deleteCourse, updateCourse } =
-    coursesSlice.actions;
+export const { addNewCourse, deleteCourse, updateCourse } = coursesSlice.actions;
 
 export default coursesSlice.reducer;
