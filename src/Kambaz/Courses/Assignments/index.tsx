@@ -10,10 +10,11 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import * as assignmentClient from "./client";
 
-export default function Assignments() {
+export default function Assignments({ viewContext }: { viewContext?: any }) {
     const { cid } = useParams();
     const location = useLocation();
-    const { currentUser } = useSelector((state: any) => state.accountReducer);
+    const reduxCurrentUser = useSelector((state: any) => state.accountReducer);
+    const currentUser = viewContext?.currentUser || reduxCurrentUser;
     const [assignments, setAssignments] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [show, setShow] = useState(false);
@@ -69,7 +70,7 @@ export default function Assignments() {
         <div className="container-fluid px-4 py-3" id="wd-assignments">
             <Row>
                 <Col xs={12}>
-                    {currentUser.role === "FACULTY" && <span className="float-end"><AssignmentsControls /></span>}
+                    {currentUser.role === "FACULTY" && <span className="float-end w-100"><AssignmentsControls /></span>}
                 </Col>
             </Row>
 

@@ -42,7 +42,7 @@ export default function Dashboard({ courses, course, allCourses, setCourse, addN
             <h1 id="wd-dashboard-title">Dashboard
                 {currentUser && currentUser.role === "STUDENT" && (
                     <Button onClick={() => setEnrolling(!enrolling)} className="float-end btn btn-primary">
-                        {enrolling ? "My Courses" : "All Courses"}
+                        {enrolling ? "Display My Courses" : "Display All Courses"}
                     </Button>
                 )}
             </h1><hr />
