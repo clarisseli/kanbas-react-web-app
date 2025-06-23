@@ -7,7 +7,7 @@ import * as client from "./client";
 import type { Quiz, Question } from "./types";
 
 interface PreviewAnswers {
-    [questionId: string]: string | number | boolean;
+    [questionId: string]: string | number | boolean | number[] | string[];
 }
 
 export default function QuizPreview() {
@@ -32,6 +32,17 @@ export default function QuizPreview() {
             setLoading(true);
             const fetchedQuiz = await client.fetchQuiz(qid);
             setQuiz(fetchedQuiz);
+
+            // Initialize answers for multiple choice with multiple answers and multiple blanks
+            const initialAnswers: PreviewAnswers = {};
+            fetchedQuiz.questions.forEach((question: Question) => {
+                if (question.type === "FILL-IN-THE-BLANK" && question.blanks) {
+                    initialAnswers[question.id] = new Array(question.blanks.length).fill("");
+                } else if (question.type === "MULTIPLE-CHOICE" && question.multipleAnswers) {
+                    initialAnswers[question.id] = [];
+                }
+            });
+            setAnswers(initialAnswers);
         } catch (error) {
             console.error("Error loading quiz:", error);
         } finally {
@@ -39,8 +50,33 @@ export default function QuizPreview() {
         }
     };
 
-    const handleAnswerChange = (questionId: string, answer: any) => {
-        setAnswers({ ...answers, [questionId]: answer });
+    const handleAnswerChange = (questionId: string, answer: any, blankIndex?: number) => {
+        const question = quiz?.questions.find(q => q.id === questionId);
+        if (!question) return;
+
+        if (question.type === "FILL-IN-THE-BLANK" && question.blanks && blankIndex !== undefined) {
+            const currentAnswers = (answers[questionId] as string[]) || new Array(question.blanks.length).fill("");
+            const newAnswers = [...currentAnswers];
+            newAnswers[blankIndex] = answer;
+            setAnswers({ ...answers, [questionId]: newAnswers });
+        } else if (question.type === "MULTIPLE-CHOICE" && question.multipleAnswers) {
+            const currentChoices = (answers[questionId] as number[]) || [];
+            const choiceIndex = answer as number;
+
+            if (currentChoices.includes(choiceIndex)) {
+                setAnswers({
+                    ...answers,
+                    [questionId]: currentChoices.filter(c => c !== choiceIndex)
+                });
+            } else {
+                setAnswers({
+                    ...answers,
+                    [questionId]: [...currentChoices, choiceIndex]
+                });
+            }
+        } else {
+            setAnswers({ ...answers, [questionId]: answer });
+        }
     };
 
     const calculateScore = () => {
@@ -49,29 +85,64 @@ export default function QuizPreview() {
         let totalScore = 0;
         quiz.questions.forEach(question => {
             const userAnswer = answers[question.id];
-            let isCorrect = false;
+            let pointsEarned = 0;
 
             switch (question.type) {
                 case "MULTIPLE-CHOICE":
-                    isCorrect = userAnswer === question.correctChoice;
+                    if (question.multipleAnswers && question.correctChoices) {
+                        const userChoices = (userAnswer as number[]) || [];
+                        const correctChoices = question.correctChoices;
+
+                        // Check if user has any wrong answers
+                        const hasWrongAnswer = userChoices.some(choice => !correctChoices.includes(choice));
+
+                        if (!hasWrongAnswer && userChoices.length > 0) {
+                            const correctCount = userChoices.filter(choice => correctChoices.includes(choice)).length;
+                            pointsEarned = (correctCount / correctChoices.length) * question.points;
+                        }
+                    } else {
+                        if (userAnswer === question.correctChoice) {
+                            pointsEarned = question.points;
+                        }
+                    }
                     break;
+
                 case "TRUE-FALSE":
-                    isCorrect = userAnswer === question.correctAnswer;
+                    if (userAnswer === question.correctAnswer) {
+                        pointsEarned = question.points;
+                    }
                     break;
+
                 case "FILL-IN-THE-BLANK":
-                    const userAnswerStr = String(userAnswer).toLowerCase().trim();
-                    isCorrect = question.answers?.some(ans =>
-                        ans.toLowerCase().trim() === userAnswerStr
-                    ) || false;
+                    if (question.blanks) {
+                        const userAnswers = (userAnswer as string[]) || [];
+                        let correctBlanks = 0;
+
+                        question.blanks.forEach((blank, index) => {
+                            const userBlankAnswer = (userAnswers[index] || "").toLowerCase().trim();
+                            const isCorrect = blank.possibleAnswers.some(ans =>
+                                ans.toLowerCase().trim() === userBlankAnswer
+                            );
+                            if (isCorrect) correctBlanks++;
+                        });
+
+                        pointsEarned = (correctBlanks / question.blanks.length) * question.points;
+                    } else if (question.answers) {
+                        const userAnswerStr = String(userAnswer).toLowerCase().trim();
+                        const isCorrect = question.answers.some(ans =>
+                            ans.toLowerCase().trim() === userAnswerStr
+                        );
+                        if (isCorrect) {
+                            pointsEarned = question.points;
+                        }
+                    }
                     break;
             }
 
-            if (isCorrect) {
-                totalScore += question.points;
-            }
+            totalScore += pointsEarned;
         });
 
-        setScore(totalScore);
+        setScore(Math.round(totalScore * 100) / 100);
         setShowResults(true);
     };
 
@@ -99,19 +170,29 @@ export default function QuizPreview() {
 
                     {question.type === "MULTIPLE-CHOICE" && (
                         <Form.Group>
-                            {question.choices?.map((choice, choiceIndex) => (
-                                <Form.Check
-                                    key={choiceIndex}
-                                    type="radio"
-                                    id={`preview-q${question.id}-choice${choiceIndex}`}
-                                    name={`preview-question-${question.id}`}
-                                    label={choice}
-                                    checked={answers[question.id] === choiceIndex}
-                                    onChange={() => handleAnswerChange(question.id, choiceIndex)}
-                                    disabled={showResults}
-                                    className="mb-3 ps-4"
-                                />
-                            ))}
+                            {question.multipleAnswers && (
+                                <p className="text-muted small mb-3">Select all that apply</p>
+                            )}
+                            {question.choices?.map((choice, choiceIndex) => {
+                                const userAnswer = answers[question.id];
+                                const isChecked = question.multipleAnswers
+                                    ? ((userAnswer as number[]) || []).includes(choiceIndex)
+                                    : userAnswer === choiceIndex;
+
+                                return (
+                                    <Form.Check
+                                        key={choiceIndex}
+                                        type={question.multipleAnswers ? "checkbox" : "radio"}
+                                        id={`preview-q${question.id}-choice${choiceIndex}`}
+                                        name={question.multipleAnswers ? undefined : `preview-question-${question.id}`}
+                                        label={choice}
+                                        checked={isChecked}
+                                        onChange={() => handleAnswerChange(question.id, choiceIndex)}
+                                        disabled={showResults}
+                                        className="mb-3 ps-4"
+                                    />
+                                );
+                            })}
                         </Form.Group>
                     )}
 
@@ -142,19 +223,52 @@ export default function QuizPreview() {
 
                     {question.type === "FILL-IN-THE-BLANK" && (
                         <Form.Group>
-                            <Form.Control
-                                type="text"
-                                placeholder="Enter your answer"
-                                value={answers[question.id] as string || ""}
-                                onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-                                disabled={showResults}
-                                className="w-50"
-                            />
+                            {question.blanks ? (
+                                <div>
+                                    {question.blanks.map((blank, blankIndex) => (
+                                        <div key={blank.id} className="mb-3">
+                                            <Form.Label>Blank {blankIndex + 1}</Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                placeholder={`Enter answer for blank ${blankIndex + 1}`}
+                                                value={((answers[question.id] as string[]) || [])[blankIndex] || ""}
+                                                onChange={(e) => handleAnswerChange(question.id, e.target.value, blankIndex)}
+                                                disabled={showResults}
+                                                className="w-50"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Enter your answer"
+                                    value={answers[question.id] as string || ""}
+                                    onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                                    disabled={showResults}
+                                    className="w-50"
+                                />
+                            )}
                         </Form.Group>
                     )}
                 </Card.Body>
             </Card>
         );
+    };
+
+    const isQuestionAnswered = (question: Question): boolean => {
+        const answer = answers[question.id];
+        if (answer === undefined || answer === null) return false;
+
+        if (question.type === "FILL-IN-THE-BLANK" && question.blanks) {
+            const blanksAnswers = answer as string[];
+            return blanksAnswers && blanksAnswers.every(a => a && a.trim() !== "");
+        } else if (question.type === "MULTIPLE-CHOICE" && question.multipleAnswers) {
+            const choices = answer as number[];
+            return choices && choices.length > 0;
+        }
+
+        return answer !== "";
     };
 
     const formatTime = (date: Date) => {
@@ -231,23 +345,58 @@ export default function QuizPreview() {
                 {quiz.questions.map((question, index) => {
                     const userAnswer = answers[question.id];
                     let isCorrect = false;
+                    let pointsEarned = 0;
 
                     switch (question.type) {
                         case "MULTIPLE-CHOICE":
-                            isCorrect = userAnswer === question.correctChoice;
+                            if (question.multipleAnswers && question.correctChoices) {
+                                const userChoices = (userAnswer as number[]) || [];
+                                const correctChoices = question.correctChoices;
+
+                                const hasWrongAnswer = userChoices.some(choice => !correctChoices.includes(choice));
+
+                                if (!hasWrongAnswer && userChoices.length > 0) {
+                                    const correctCount = userChoices.filter(choice => correctChoices.includes(choice)).length;
+                                    pointsEarned = (correctCount / correctChoices.length) * question.points;
+                                    isCorrect = correctCount === correctChoices.length;
+                                }
+                            } else {
+                                isCorrect = userAnswer === question.correctChoice;
+                                if (isCorrect) pointsEarned = question.points;
+                            }
                             break;
+
                         case "TRUE-FALSE":
                             isCorrect = userAnswer === question.correctAnswer;
+                            if (isCorrect) pointsEarned = question.points;
                             break;
+
                         case "FILL-IN-THE-BLANK":
-                            const userAnswerStr = String(userAnswer).toLowerCase().trim();
-                            isCorrect = question.answers?.some(ans =>
-                                ans.toLowerCase().trim() === userAnswerStr
-                            ) || false;
+                            if (question.blanks) {
+                                const userAnswers = (userAnswer as string[]) || [];
+                                let correctBlanks = 0;
+
+                                question.blanks.forEach((blank, blankIdx) => {
+                                    const userBlankAnswer = (userAnswers[blankIdx] || "").toLowerCase().trim();
+                                    const isBlankCorrect = blank.possibleAnswers.some(ans =>
+                                        ans.toLowerCase().trim() === userBlankAnswer
+                                    );
+                                    if (isBlankCorrect) correctBlanks++;
+                                });
+
+                                pointsEarned = (correctBlanks / question.blanks.length) * question.points;
+                                isCorrect = correctBlanks === question.blanks.length;
+                            } else if (question.answers) {
+                                const userAnswerStr = String(userAnswer).toLowerCase().trim();
+                                isCorrect = question.answers.some(ans =>
+                                    ans.toLowerCase().trim() === userAnswerStr
+                                );
+                                if (isCorrect) pointsEarned = question.points;
+                            }
                             break;
                     }
 
-                    const pointsEarned = isCorrect ? question.points : 0;
+                    pointsEarned = Math.round(pointsEarned * 100) / 100;
 
                     return (
                         <Card key={question.id} className="mb-4">
@@ -264,37 +413,77 @@ export default function QuizPreview() {
                                     )}
                                 </div>
 
+                                {/* Multiple Choice Results */}
                                 {question.type === "MULTIPLE-CHOICE" && (
                                     <div>
-                                        {question.choices?.map((choice, choiceIndex) => {
-                                            const isUserAnswer = userAnswer === choiceIndex;
-                                            const isCorrectAnswer = question.correctChoice === choiceIndex;
+                                        {question.multipleAnswers && question.correctChoices ? (
+                                            // Multiple answer multiple choice
+                                            <div>
+                                                {question.choices?.map((choice, choiceIndex) => {
+                                                    const userChoices = (userAnswer as number[]) || [];
+                                                    const isUserChoice = userChoices.includes(choiceIndex);
+                                                    const isCorrectChoice = question.correctChoices!.includes(choiceIndex);
 
-                                            return (
-                                                <div
-                                                    key={choiceIndex}
-                                                    className={`p-2 mb-2 ${isUserAnswer && isCorrect ? 'bg-success bg-opacity-25' :
-                                                        isUserAnswer && !isCorrect ? 'bg-danger bg-opacity-25' :
-                                                            isCorrectAnswer && !isUserAnswer ? 'bg-success bg-opacity-25' : ''
-                                                        }`}
-                                                >
-                                                    <span className="me-2">•</span>
-                                                    {choice}
-                                                    {isUserAnswer && isCorrect && (
-                                                        <span className="ms-3 text-success fw-bold">Correct!</span>
-                                                    )}
-                                                    {isUserAnswer && !isCorrect && (
-                                                        <span className="ms-3 text-danger fw-bold">Incorrect</span>
-                                                    )}
-                                                    {isCorrectAnswer && !isUserAnswer && (
-                                                        <span className="ms-3 text-success fw-bold">Correct Answer</span>
-                                                    )}
-                                                </div>
-                                            );
-                                        })}
+                                                    return (
+                                                        <div
+                                                            key={choiceIndex}
+                                                            className={`p-2 mb-2 ${isUserChoice && isCorrectChoice ? 'bg-success bg-opacity-25' :
+                                                                isUserChoice && !isCorrectChoice ? 'bg-danger bg-opacity-25' :
+                                                                    !isUserChoice && isCorrectChoice ? 'bg-success bg-opacity-25' : ''
+                                                                }`}
+                                                        >
+                                                            <span className="me-2">
+                                                                {isUserChoice ? "☑" : "☐"}
+                                                            </span>
+                                                            {choice}
+                                                            {isUserChoice && isCorrectChoice && (
+                                                                <span className="ms-3 text-success fw-bold">Correct Selection!</span>
+                                                            )}
+                                                            {isUserChoice && !isCorrectChoice && (
+                                                                <span className="ms-3 text-danger fw-bold">Incorrect Selection</span>
+                                                            )}
+                                                            {!isUserChoice && isCorrectChoice && (
+                                                                <span className="ms-3 text-success fw-bold">Correct Answer</span>
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        ) : (
+                                            // Single answer multiple choice
+                                            <div>
+                                                {question.choices?.map((choice, choiceIndex) => {
+                                                    const isUserAnswer = userAnswer === choiceIndex;
+                                                    const isCorrectAnswer = question.correctChoice === choiceIndex;
+
+                                                    return (
+                                                        <div
+                                                            key={choiceIndex}
+                                                            className={`p-2 mb-2 ${isUserAnswer && isCorrect ? 'bg-success bg-opacity-25' :
+                                                                isUserAnswer && !isCorrect ? 'bg-danger bg-opacity-25' :
+                                                                    isCorrectAnswer && !isUserAnswer ? 'bg-success bg-opacity-25' : ''
+                                                                }`}
+                                                        >
+                                                            <span className="me-2">•</span>
+                                                            {choice}
+                                                            {isUserAnswer && isCorrect && (
+                                                                <span className="ms-3 text-success fw-bold">Correct!</span>
+                                                            )}
+                                                            {isUserAnswer && !isCorrect && (
+                                                                <span className="ms-3 text-danger fw-bold">Incorrect</span>
+                                                            )}
+                                                            {isCorrectAnswer && !isUserAnswer && (
+                                                                <span className="ms-3 text-success fw-bold">Correct Answer</span>
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
                                     </div>
                                 )}
 
+                                {/* True/False Results */}
                                 {question.type === "TRUE-FALSE" && (
                                     <div>
                                         <div
@@ -334,24 +523,63 @@ export default function QuizPreview() {
                                     </div>
                                 )}
 
+                                {/* Fill in the Blank Results */}
                                 {question.type === "FILL-IN-THE-BLANK" && (
                                     <div>
-                                        <div
-                                            className={`p-2 mb-2 ${isCorrect ? 'bg-success bg-opacity-25' : 'bg-danger bg-opacity-25'
-                                                }`}
-                                        >
-                                            <strong>Your Answer:</strong> {userAnswer || "(No answer provided)"}
-                                            {isCorrect && (
-                                                <span className="ms-3 text-success fw-bold">Correct!</span>
-                                            )}
-                                            {!isCorrect && (
-                                                <span className="ms-3 text-danger fw-bold">Incorrect</span>
-                                            )}
-                                        </div>
+                                        {question.blanks ? (
+                                            // Multiple blanks
+                                            <div>
+                                                {question.blanks.map((blank, blankIdx) => {
+                                                    const userAnswers = (userAnswer as string[]) || [];
+                                                    const userBlankAnswer = userAnswers[blankIdx] || "";
+                                                    const isBlankCorrect = blank.possibleAnswers.some(ans =>
+                                                        ans.toLowerCase().trim() === userBlankAnswer.toLowerCase().trim()
+                                                    );
 
-                                        {!isCorrect && (
-                                            <div className="mt-2 p-2 bg-success bg-opacity-25">
-                                                <strong>Correct Answer(s):</strong> {question.answers?.join(", ")}
+                                                    return (
+                                                        <div key={blank.id} className="mb-3">
+                                                            <div
+                                                                className={`p-2 mb-2 ${isBlankCorrect ? 'bg-success bg-opacity-25' : 'bg-danger bg-opacity-25'
+                                                                    }`}
+                                                            >
+                                                                <strong>Blank {blankIdx + 1}:</strong> {userBlankAnswer || "(No answer provided)"}
+                                                                {isBlankCorrect && (
+                                                                    <span className="ms-3 text-success fw-bold">Correct!</span>
+                                                                )}
+                                                                {!isBlankCorrect && (
+                                                                    <span className="ms-3 text-danger fw-bold">Incorrect</span>
+                                                                )}
+                                                            </div>
+                                                            {!isBlankCorrect && (
+                                                                <div className="mt-2 p-2 bg-success bg-opacity-25">
+                                                                    <strong>Correct Answer(s):</strong> {blank.possibleAnswers.join(", ")}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        ) : (
+                                            // Single blank
+                                            <div>
+                                                <div
+                                                    className={`p-2 mb-2 ${isCorrect ? 'bg-success bg-opacity-25' : 'bg-danger bg-opacity-25'
+                                                        }`}
+                                                >
+                                                    <strong>Your Answer:</strong> {userAnswer || "(No answer provided)"}
+                                                    {isCorrect && (
+                                                        <span className="ms-3 text-success fw-bold">Correct!</span>
+                                                    )}
+                                                    {!isCorrect && (
+                                                        <span className="ms-3 text-danger fw-bold">Incorrect</span>
+                                                    )}
+                                                </div>
+
+                                                {!isCorrect && (
+                                                    <div className="mt-2 p-2 bg-success bg-opacity-25">
+                                                        <strong>Correct Answer(s):</strong> {question.answers?.join(", ")}
+                                                    </div>
+                                                )}
                                             </div>
                                         )}
                                     </div>
@@ -489,7 +717,7 @@ export default function QuizPreview() {
                         {quiz.questions.map((_, index) => (
                             <button
                                 key={index}
-                                className={`list-group-item list-group-item-action border-0 d-flex align-items-center py-2 ${answers[quiz.questions[index].id] !== undefined ? 'text-dark' : 'text-danger'
+                                className={`list-group-item list-group-item-action border-0 d-flex align-items-center py-2 ${isQuestionAnswered(quiz.questions[index]) ? 'text-dark' : 'text-danger'
                                     }`}
                                 onClick={() => {
                                     setCurrentQuestionIndex(index);
@@ -500,7 +728,7 @@ export default function QuizPreview() {
                                 }}
                                 style={{ backgroundColor: 'transparent', fontSize: '1.1rem' }}
                             >
-                                {answers[quiz.questions[index].id] !== undefined ? (
+                                {isQuestionAnswered(quiz.questions[index]) ? (
                                     <FaRegCheckCircle size={18} className="me-2" />
                                 ) : (
                                     <AiOutlineQuestionCircle size={18} className="me-2" />
