@@ -18,8 +18,7 @@ export default function ModulesControls({
     return (
         <div id="wd-modules-controls"
             className="wd-row-center flex-wrap justify-content-end gap-2"
-            style={{ overflow: "visible" }}
-        >
+            style={{ overflow: "visible" }}>
             <Button variant="secondary" size="lg" id="wd-collapse-all" className="px-3 flex-shrink-0">
                 Collapse All
             </Button>
@@ -61,8 +60,7 @@ export default function ModulesControls({
                 dialogTitle="Add Module"
                 moduleName={moduleName}
                 setModuleName={setModuleName}
-                addModule={addModule}
-            />
+                addModule={addModule} />
         </div>
     );
 }
