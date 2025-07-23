@@ -29,7 +29,7 @@ This full-stack application provides an educational platform with features inclu
 *Faculty can view the quiz details, and publish/unpublish the quiz*
 
 ### Quiz Editor
-![Quiz Editor](screenshots/quiz-editor.png)
+![Quiz Editor](screenshots/quiz-question-editor.png)
 *Faculty can create quizzes with multiple question types including multiple choice, true/false, and fill-in-the-blank*
 
 ### Taking a Quiz
@@ -75,7 +75,7 @@ Faculty can upload custom images for their courses, creating a more engaging vis
 
 ### Prerequisites
 Before you begin, ensure you have the following installed:
-- **Node.js** (version 16 or higher) - [Download here](https://nodejs.org/)
+- **Node.js** - [Download here](https://nodejs.org/)
 - **npm** (comes with Node.js)
 - **Git** for cloning the repository
 
