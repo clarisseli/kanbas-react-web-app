@@ -54,3 +54,19 @@ export const getUsersForCourse = async (courseId: any) => {
     const { data } = await axiosWithCredentials.get(`${COURSES_API}/${courseId}/users`);
     return data;
 };
+
+export const uploadCourseImage = async (courseId: string, file: File) => {
+    const formData = new FormData();
+    formData.append('courseImage', file);
+
+    const response = await axiosWithCredentials.post(
+        `${COURSES_API}/${courseId}/image`,
+        formData,
+        {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        }
+    );
+    return response.data;
+};

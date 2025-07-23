@@ -215,7 +215,7 @@ export default function Lab1() {
                     </button>
                     <br /><br />
                     <label htmlFor="wd-upload">Upload a file:</label><br />
-                    <input type="file" id="wd-upload" />
+                    <input type="file" id="wd-upload" /><br /><br />
 
                     <h5 id="wd-radio-buttons">Radio buttons</h5>
 

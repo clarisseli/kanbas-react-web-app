@@ -10,6 +10,8 @@ import ProtectedRoute from "./Account/ProtectedRoute";
 import Session from "./Account/Session";
 import * as courseClient from "./Courses/client";
 import * as userClient from "./Account/client";
+import YouTubeVideoSearch from "./YouTube/search";
+import YouTubeVideoDetails from "./YouTube/details";
 
 
 export default function Kambaz() {
@@ -20,7 +22,7 @@ export default function Kambaz() {
     number: "New Number",
     startDate: "2023-09-10",
     endDate: "2023-12-15",
-    image: "/images/reactjs.jpg",
+    image: "",
     description: "New Description"
   });
   const [enrolling, setEnrolling] = useState<boolean>(false);
@@ -111,13 +113,14 @@ export default function Kambaz() {
                   updateCourse={updateCourse}
                   enrolling={enrolling}
                   setEnrolling={setEnrolling}
-                  updateEnrollment={updateEnrollment}
-                />
-              </ProtectedRoute>
-            } />
+                  updateEnrollment={updateEnrollment} />
+              </ProtectedRoute>} />
             <Route path="/Courses/:cid/*" element={<ProtectedRoute><Courses courses={courses} /></ProtectedRoute>} />
             <Route path="/Calendar" element={<h1>Calendar</h1>} />
             <Route path="/Inbox" element={<h1>Inbox</h1>} />
+            <Route path="YouTube" element={<YouTubeVideoSearch />} />
+            <Route path="YouTube/:search" element={<YouTubeVideoSearch />} />
+            <Route path="YouTube/details/:videoId" element={<YouTubeVideoDetails />} />
           </Routes>
         </div>
       </div>

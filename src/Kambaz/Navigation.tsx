@@ -1,7 +1,7 @@
 import { AiOutlineDashboard } from "react-icons/ai";
 import { IoCalendarOutline } from "react-icons/io5";
 import { LiaBookSolid, LiaCogSolid } from "react-icons/lia";
-import { FaInbox, FaRegCircleUser } from "react-icons/fa6";
+import { FaInbox, FaRegCircleUser, FaYoutube } from "react-icons/fa6";
 import { Link, useLocation } from "react-router-dom";
 import { ListGroup } from "react-bootstrap";
 import { useSelector } from "react-redux";
@@ -13,16 +13,13 @@ export default function KambazNavigation() {
     const [links, setLinks] = useState<any[]>([]);
     useEffect(() => {
         const updatedLinks = [
-            {
-                label: "Account",
-                path: currentUser ? "/Kambaz/Account/Profile" : "/Kambaz/Account/Signin",
-                icon: FaRegCircleUser
-            },
+            { label: "Account", path: currentUser ? "/Kambaz/Account/Profile" : "/Kambaz/Account/Signin", icon: FaRegCircleUser },
             { label: "Dashboard", path: "/Kambaz/Dashboard", icon: AiOutlineDashboard },
             { label: "Courses", path: "/Kambaz/Dashboard", icon: LiaBookSolid },
             { label: "Calendar", path: "/Kambaz/Calendar", icon: IoCalendarOutline },
             { label: "Inbox", path: "/Kambaz/Inbox", icon: FaInbox },
             { label: "Labs", path: "/Labs", icon: LiaCogSolid },
+            { id: "wd-youtube-link", path: "/Kambaz/YouTube", label: "YouTube", icon: FaYoutube },
         ];
         setLinks(updatedLinks);
     }, [currentUser]);
