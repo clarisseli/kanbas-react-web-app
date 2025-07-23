@@ -4,6 +4,7 @@ import { Card, Button, Row, Col, Container } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import * as client from "./client";
 import type { Quiz, QuizAttempt, Question } from "./types";
+import { FaArrowCircleRight, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
 export default function QuizResults({ viewContext }: { viewContext?: any }) {
     const { cid, qid } = useParams();
@@ -102,70 +103,91 @@ export default function QuizResults({ viewContext }: { viewContext?: any }) {
         switch (question.type) {
             case "MULTIPLE-CHOICE":
                 if (question.multipleAnswers && question.correctChoices) {
+                    // Multiple correct answers case
                     const userChoices = (answer.studentAnswer as number[]) || [];
                     const correctChoices = question.correctChoices;
 
                     return (
                         <div>
+                            <hr className="mb-3" />
                             {question.choices?.map((choice, choiceIndex) => {
                                 const isUserSelected = userChoices.includes(choiceIndex);
                                 const isCorrectChoice = correctChoices.includes(choiceIndex);
                                 const isCorrectSelection = isUserSelected && isCorrectChoice;
                                 const isWrongSelection = isUserSelected && !isCorrectChoice;
-                                const isMissedCorrect = !isUserSelected && isCorrectChoice;
 
                                 return (
-                                    <div
-                                        key={choiceIndex}
-                                        className={`p-2 mb-2 ${isCorrectSelection ? 'bg-success bg-opacity-25' :
-                                            isWrongSelection ? 'bg-danger bg-opacity-25' :
-                                                showCorrectAnswers && isMissedCorrect ? 'bg-warning bg-opacity-25' : ''
-                                            }`}
-                                    >
-                                        <span className="me-2">
-                                            {isUserSelected ? '☑' : '☐'}
-                                        </span>
-                                        {choice}
-                                        {isCorrectSelection && (
-                                            <span className="ms-3 text-success fw-bold">✓ Correct</span>
-                                        )}
-                                        {isWrongSelection && (
-                                            <span className="ms-3 text-danger fw-bold">✗ Incorrect selection</span>
-                                        )}
-                                        {showCorrectAnswers && isMissedCorrect && (
-                                            <span className="ms-3 text-warning fw-bold">← Should be selected</span>
-                                        )}
+                                    <div key={choiceIndex}>
+                                        <div className="d-flex align-items-center py-2">
+                                            <div className="me-2" style={{ minWidth: '24px' }}>
+                                                {isCorrectSelection && (
+                                                    <FaCheckCircle className="text-success fs-5" />
+                                                )}
+                                                {isWrongSelection && (
+                                                    <FaTimesCircle className="text-danger fs-5" />
+                                                )}
+                                                {!isUserSelected && isCorrectChoice && showCorrectAnswers && (
+                                                    <FaArrowCircleRight className="text-success fs-5" />
+                                                )}
+                                            </div>
+                                            <input
+                                                type="checkbox"
+                                                checked={isUserSelected}
+                                                disabled
+                                                className="form-check-input me-3"
+                                                style={{
+                                                    opacity: 0.5,
+                                                    filter: 'grayscale(100%)'
+                                                }}
+                                            />
+                                            <div className={`flex-grow-1 ${isUserSelected ? 'text-dark' : 'text-muted'}`}>
+                                                {choice}
+                                            </div>
+                                        </div>
+                                        {choiceIndex < (question.choices?.length || 0) - 1 && <hr className="my-1" />}
                                     </div>
                                 );
                             })}
                         </div>
                     );
                 } else {
+                    // Single correct answer case
                     return (
                         <div>
+                            <hr className="mb-3" />
                             {question.choices?.map((choice, choiceIndex) => {
                                 const isUserAnswer = answer.studentAnswer === choiceIndex;
                                 const isCorrectAnswer = question.correctChoice === choiceIndex;
 
                                 return (
-                                    <div
-                                        key={choiceIndex}
-                                        className={`p-2 mb-2 ${isUserAnswer && answer.isCorrect ? 'bg-success bg-opacity-25' :
-                                            isUserAnswer && !answer.isCorrect ? 'bg-danger bg-opacity-25' :
-                                                showCorrectAnswers && isCorrectAnswer && !isUserAnswer ? 'bg-success bg-opacity-25' : ''
-                                            }`}
-                                    >
-                                        <span className="me-2">•</span>
-                                        {choice}
-                                        {isUserAnswer && answer.isCorrect && (
-                                            <span className="ms-3 text-success fw-bold">Correct!</span>
-                                        )}
-                                        {isUserAnswer && !answer.isCorrect && (
-                                            <span className="ms-3 text-danger fw-bold">Incorrect</span>
-                                        )}
-                                        {showCorrectAnswers && isCorrectAnswer && !isUserAnswer && (
-                                            <span className="ms-3 text-success fw-bold">Correct Answer</span>
-                                        )}
+                                    <div key={choiceIndex}>
+                                        <div className="d-flex align-items-center py-2">
+                                            <div className="me-2" style={{ minWidth: '24px' }}>
+                                                {isUserAnswer && isCorrectAnswer && (
+                                                    <FaCheckCircle className="text-success fs-5" />
+                                                )}
+                                                {isUserAnswer && !isCorrectAnswer && (
+                                                    <FaTimesCircle className="text-danger fs-5" />
+                                                )}
+                                                {!isUserAnswer && isCorrectAnswer && showCorrectAnswers && (
+                                                    <FaArrowCircleRight className="text-success fs-5" />
+                                                )}
+                                            </div>
+                                            <input
+                                                type="radio"
+                                                checked={isUserAnswer}
+                                                disabled
+                                                className="form-check-input me-3"
+                                                style={{
+                                                    opacity: 0.5,
+                                                    filter: 'grayscale(100%)'
+                                                }}
+                                            />
+                                            <div className={`flex-grow-1 ${isUserAnswer ? 'text-dark' : 'text-muted'}`}>
+                                                {choice}
+                                            </div>
+                                        </div>
+                                        {choiceIndex < (question.choices?.length || 0) - 1 && <hr className="my-1" />}
                                     </div>
                                 );
                             })}
@@ -176,49 +198,67 @@ export default function QuizResults({ viewContext }: { viewContext?: any }) {
             case "TRUE-FALSE":
                 return (
                     <div>
-                        <div
-                            className={`p-2 mb-2 ${answer.studentAnswer === true && answer.isCorrect ? 'bg-success bg-opacity-25' :
-                                answer.studentAnswer === true && !answer.isCorrect ? 'bg-danger bg-opacity-25' :
-                                    showCorrectAnswers && question.correctAnswer === true && answer.studentAnswer !== true ? 'bg-success bg-opacity-25' : ''
-                                }`}
-                        >
-                            True
-                            {answer.studentAnswer === true && answer.isCorrect && (
-                                <span className="ms-3 text-success fw-bold">Correct!</span>
-                            )}
-                            {answer.studentAnswer === true && !answer.isCorrect && (
-                                <span className="ms-3 text-danger fw-bold">Incorrect</span>
-                            )}
-                            {showCorrectAnswers && question.correctAnswer === true && answer.studentAnswer !== true && (
-                                <span className="ms-3 text-success fw-bold">Correct Answer</span>
-                            )}
+                        <hr className="mb-3" />
+                        <div className="d-flex align-items-center py-2">
+                            <div className="me-2" style={{ minWidth: '24px' }}>
+                                {answer.studentAnswer === true && answer.isCorrect && (
+                                    <FaCheckCircle className="text-success fs-5" />
+                                )}
+                                {answer.studentAnswer === true && !answer.isCorrect && (
+                                    <FaTimesCircle className="text-danger fs-5" />
+                                )}
+                                {answer.studentAnswer !== true && question.correctAnswer === true && showCorrectAnswers && (
+                                    <FaArrowCircleRight className="text-success fs-5" />
+                                )}
+                            </div>
+                            <input
+                                type="radio"
+                                checked={answer.studentAnswer === true}
+                                disabled
+                                className="form-check-input me-3"
+                                style={{
+                                    opacity: 0.5,
+                                    filter: 'grayscale(100%)'
+                                }}
+                            />
+                            <div className={answer.studentAnswer === true ? 'text-dark' : 'text-muted'}>True</div>
                         </div>
-                        <div
-                            className={`p-2 ${answer.studentAnswer === false && answer.isCorrect ? 'bg-success bg-opacity-25' :
-                                answer.studentAnswer === false && !answer.isCorrect ? 'bg-danger bg-opacity-25' :
-                                    showCorrectAnswers && question.correctAnswer === false && answer.studentAnswer !== false ? 'bg-success bg-opacity-25' : ''
-                                }`}
-                        >
-                            False
-                            {answer.studentAnswer === false && answer.isCorrect && (
-                                <span className="ms-3 text-success fw-bold">Correct!</span>
-                            )}
-                            {answer.studentAnswer === false && !answer.isCorrect && (
-                                <span className="ms-3 text-danger fw-bold">Incorrect</span>
-                            )}
-                            {showCorrectAnswers && question.correctAnswer === false && answer.studentAnswer !== false && (
-                                <span className="ms-3 text-success fw-bold">Correct Answer</span>
-                            )}
+                        <hr className="my-1" />
+                        <div className="d-flex align-items-center py-2">
+                            <div className="me-2" style={{ minWidth: '24px' }}>
+                                {answer.studentAnswer === false && answer.isCorrect && (
+                                    <FaCheckCircle className="text-success fs-5" />
+                                )}
+                                {answer.studentAnswer === false && !answer.isCorrect && (
+                                    <FaTimesCircle className="text-danger fs-5" />
+                                )}
+                                {answer.studentAnswer !== false && question.correctAnswer === false && showCorrectAnswers && (
+                                    <FaArrowCircleRight className="text-success fs-5" />
+                                )}
+                            </div>
+                            <input
+                                type="radio"
+                                checked={answer.studentAnswer === false}
+                                disabled
+                                className="form-check-input me-3"
+                                style={{
+                                    opacity: 0.5,
+                                    filter: 'grayscale(100%)'
+                                }}
+                            />
+                            <div className={answer.studentAnswer === false ? 'text-dark' : 'text-muted'}>False</div>
                         </div>
                     </div>
                 );
 
             case "FILL-IN-THE-BLANK":
+                // Rest of the fill-in-the-blank case remains the same...
                 if (question.blanks) {
                     const userAnswers = (answer.studentAnswer as string[]) || [];
 
                     return (
                         <div>
+                            <hr className="mb-3" />
                             {question.blanks.map((blank, blankIndex) => {
                                 const userBlankAnswer = userAnswers[blankIndex] || "";
                                 const isBlankCorrect = blank.possibleAnswers.some(ans =>
@@ -226,50 +266,65 @@ export default function QuizResults({ viewContext }: { viewContext?: any }) {
                                 );
 
                                 return (
-                                    <div key={blank.id} className="mb-3">
-                                        <div
-                                            className={`p-2 mb-2 ${isBlankCorrect ? 'bg-success bg-opacity-25' : 'bg-danger bg-opacity-25'
-                                                }`}
-                                        >
-                                            <strong>Blank {blankIndex + 1}:</strong> {userBlankAnswer || "(No answer provided)"}
-                                            {isBlankCorrect && (
-                                                <span className="ms-3 text-success fw-bold">Correct!</span>
-                                            )}
-                                            {!isBlankCorrect && (
-                                                <span className="ms-3 text-danger fw-bold">Incorrect</span>
-                                            )}
+                                    <div key={blank.id}>
+                                        <div className="fw-bold mb-2">Answer {blankIndex + 1}:</div>
+
+                                        <div className="d-flex align-items-start py-2">
+                                            <div className="me-2" style={{ minWidth: '24px' }}>
+                                                {isBlankCorrect ? (
+                                                    <FaCheckCircle className="text-success fs-5" />
+                                                ) : (
+                                                    <FaTimesCircle className="text-danger fs-5" />
+                                                )}
+                                            </div>
+                                            <div>{userBlankAnswer || "(No answer provided)"}</div>
                                         </div>
 
                                         {showCorrectAnswers && !isBlankCorrect && (
-                                            <div className="ms-4 p-2 bg-success bg-opacity-25">
-                                                <strong>Correct Answer(s):</strong> {blank.possibleAnswers.join(", ")}
+                                            <div className="d-flex align-items-start py-2">
+                                                <div className="me-2" style={{ minWidth: '24px' }}>
+                                                    <FaArrowCircleRight className="text-success fs-5" />
+                                                </div>
+                                                <div className="text-muted">
+                                                    {blank.possibleAnswers.join(" or ")}
+                                                </div>
                                             </div>
                                         )}
+
+                                        {blankIndex < (question.blanks?.length || 0) - 1 && <hr className="my-2" />}
                                     </div>
                                 );
                             })}
                         </div>
                     );
                 } else {
+                    // Single blank case
                     return (
                         <div>
-                            <div
-                                className={`p-2 mb-2 ${answer.isCorrect ? 'bg-success bg-opacity-25' : 'bg-danger bg-opacity-25'
-                                    }`}
-                            >
-                                <strong>Your Answer:</strong> {answer.studentAnswer || "(No answer provided)"}
-                                {answer.isCorrect && (
-                                    <span className="ms-3 text-success fw-bold">Correct!</span>
-                                )}
-                                {!answer.isCorrect && (
-                                    <span className="ms-3 text-danger fw-bold">Incorrect</span>
-                                )}
+                            <hr className="mb-3" />
+                            <div className="d-flex align-items-start py-2">
+                                <div className="me-2" style={{ minWidth: '24px' }}>
+                                    {answer.isCorrect ? (
+                                        <FaCheckCircle className="text-success fs-5" />
+                                    ) : (
+                                        <FaTimesCircle className="text-danger fs-5" />
+                                    )}
+                                </div>
+                                <div>{answer.studentAnswer || "(No answer provided)"}</div>
                             </div>
 
-                            {showCorrectAnswers && !answer.isCorrect && (
-                                <div className="mt-2 p-2 bg-success bg-opacity-25">
-                                    <strong>Correct Answer(s):</strong> {question.answers?.join(", ")}
-                                </div>
+                            {showCorrectAnswers && !answer.isCorrect && question.answers && (
+                                <>
+                                    <hr className="my-1" />
+                                    <div className="d-flex align-items-start py-2">
+                                        <div className="me-2" style={{ minWidth: '24px' }}>
+                                            <FaArrowCircleRight className="text-success fs-5" />
+                                        </div>
+                                        <div className="text-muted">
+                                            {question.answers.join(" or ")}
+                                        </div>
+                                    </div>
+                                </>
                             )}
                         </div>
                     );
@@ -415,7 +470,34 @@ export default function QuizResults({ viewContext }: { viewContext?: any }) {
                                 </Card.Header>
                                 <Card.Body>
                                     <div className="mb-4">
-                                        {question.description ? (
+                                        {question.type === "FILL-IN-THE-BLANK" && question.description ? (
+                                            <div dangerouslySetInnerHTML={{
+                                                __html: (() => {
+                                                    let questionText = question.description;
+
+                                                    if (question.blanks) {
+                                                        // Multiple blanks case
+                                                        const userAnswers = (answer.studentAnswer as string[]) || [];
+
+                                                        // Replace each blank in order
+                                                        let blankIndex = 0;
+                                                        questionText = questionText.replace(/_{3,}\d*_{0,}|\[blank\]|\{blank\}|\[BLANK\]|\{BLANK\}/gi, () => {
+                                                            const userAnswer = userAnswers[blankIndex] || "_____";
+                                                            blankIndex++;
+                                                            return `<span style="border: 1px solid #dee2e6; padding: 2px 8px; border-radius: 4px; background-color: secondary; font-weight: 500; display: inline-block; min-width: 50px; text-align: center;">${userAnswer}</span>`;
+                                                        });
+                                                    } else {
+                                                        // Single blank case
+                                                        const userAnswer = (answer.studentAnswer as string) || "_____";
+                                                        questionText = questionText.replace(/_{3,}|\[blank\]|\{blank\}|\[BLANK\]|\{BLANK\}/i,
+                                                            `<span style="border: 1px solid #dee2e6; padding: 2px 8px; border-radius: 4px; background-color: secondary; font-weight: 500; display: inline-block; min-width: 50px; text-align: center;">${userAnswer}</span>`
+                                                        );
+                                                    }
+
+                                                    return questionText;
+                                                })()
+                                            }} />
+                                        ) : question.description ? (
                                             <div dangerouslySetInnerHTML={{ __html: question.description }} />
                                         ) : (
                                             <p>{question.title}</p>

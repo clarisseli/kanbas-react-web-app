@@ -12,8 +12,8 @@ export default function ModuleControlButtons(
 ) {
     return (
         <div className="float-end">
-            <FaPencil onClick={() => editModule(moduleId)} className="text-primary me-3" />
-            <FaTrash className="text-danger me-3" onClick={() => deleteModule(moduleId)} />
+            <FaPencil onClick={() => editModule(moduleId)} className="me-3" />
+            <FaTrash className="me-3" onClick={() => deleteModule(moduleId)} />
             <GreenCheckmark />
             <BsPlus style={{ fontSize: "36px" }} />
             <IoEllipsisVertical style={{ fontSize: "24px" }} />
